@@ -15,16 +15,18 @@ jobs:
 
       - run: sudo docker-php-ext-install pdo_mysql
 
-      - run: chown -R circleci:circleci ~/project/src
-      # Download and cache dependencies
+      - run:
+          name: フォルダの所有権を変更
+          command: chown -R $USER:$USER ~/project/src
 
-      # composer cache
       - restore_cache:
           keys:
             - composer-v1-{{ checksum "composer.lock" }}
             - composer-v1-
 
-      - run: composer install -n --prefer-dist
+      - run:
+          name: composer依存関係をインストール
+          command: composer install -n --prefer-dist
 
       - save_cache:
           key: composer-v1-{{ checksum "composer.lock" }}
@@ -36,20 +38,28 @@ jobs:
             - node-v4-{{ checksum "package-lock.json" }}
             - node-v4-
 
-      - run: npm install
+      - run:
+          name: node_modules依存関係をインストール
+          command: npm install
 
       - save_cache:
           key: node-v4-{{ checksum "package-lock.json" }}
           paths:
             - node_modules
 
-      - run: echo $ENV_FILE | base64 --decode > .env
+      - run:
+          name: .envファイルを復元
+          command: echo $ENV_FILE | base64 --decode > .env
 
-      - run: php artisan migrate --env=testing --force
+      - run:
+          name: マイグレーションを実行
+          command: php artisan migrate --env=testing --force
 
       - run: mkdir -p test_results
 
-      - run: ./vendor/bin/phpunit --testdox-xml test_results/phpunit/result.xml --coverage-html=coverage
+      - run:
+          name: テストを実行
+          command: ./vendor/bin/phpunit --testdox-xml test_results/phpunit/result.xml --coverage-html=coverage
 
       # - run: ./vendor/bin/phpcs --standard=phpcs.xml --report-junit=test_results/php_codesniffer/result.xml ./
 
