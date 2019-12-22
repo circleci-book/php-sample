@@ -2,13 +2,12 @@ version: 2.1
 jobs:
   build:
     working_directory: ~/project/src
-    resource_class: small
     docker:
       - image: circleci/php:7.3.10-stretch-node-browsers
-        environment:
-          DB_USERNAME: root
-          DB_DATABASE: circle_test
       - image: circleci/mysql:5.7
+        environment:
+          MYSQL_DATABASE: laravel
+          MYSQL_USER: laravel
 
     steps:
       - checkout:
