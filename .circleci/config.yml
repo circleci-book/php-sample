@@ -1,0 +1,69 @@
+version: 2.1
+jobs:
+  build:
+    working_directory: ~/project/src
+    resource_class: small
+    docker:
+      - image: circleci/php:7.3.10-stretch-node-browsers
+        environment:
+          DB_USERNAME: root
+          DB_DATABASE: circle_test
+      - image: circleci/mysql:5.7
+
+    steps:
+      - checkout:
+          path: ~/project
+
+      - run: sudo docker-php-ext-install pdo_mysql
+
+      - run: chown -R circleci:circleci ~/project/src
+      # Download and cache dependencies
+
+      # composer cache
+      - restore_cache:
+          keys:
+            - composer-v1-{{ checksum "composer.lock" }}
+            - composer-v1-
+
+      - run: composer install -n --prefer-dist
+
+      - save_cache:
+          key: composer-v1-{{ checksum "composer.lock" }}
+          paths:
+            - vendor
+
+      - restore_cache:
+          keys:
+            - node-v4-{{ checksum "package-lock.json" }}
+            - node-v4-
+
+      - run: npm install
+
+      - save_cache:
+          key: node-v4-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+
+      - run: echo $ENV_FILE | base64 --decode > .env
+
+      - run: php artisan migrate --env=testing --force
+
+      - run: mkdir -p test_results
+
+      - run: ./vendor/bin/phpunit --testdox-xml test_results/phpunit/result.xml --coverage-html=coverage
+
+      # - run: ./vendor/bin/phpcs --standard=phpcs.xml --report-junit=test_results/php_codesniffer/result.xml ./
+
+      - store_test_results:
+          path: test_results
+
+      - store_artifacts:
+          path: test_results
+
+      - store_artifacts:
+          path: coverage
+
+workflows:
+  main:
+    jobs:
+     - build

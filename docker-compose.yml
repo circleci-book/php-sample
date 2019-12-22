@@ -1,0 +1,21 @@
+version: "3"
+services:
+  app:
+    volumes:
+      - "./src:/project"
+    command: "php artisan serve --host=0.0.0.0 --port=8000"
+    ports:
+      - 8000:8000
+    build: ./
+    env_file: ./src/.env.dev
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db:/var/lib/mysql
