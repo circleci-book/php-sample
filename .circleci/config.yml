@@ -14,8 +14,6 @@ jobs:
       - checkout:
           path: ~/project
 
-      - run: sudo docker-php-ext-install pdo_mysql
-
       - run:
           name: フォルダの所有権を変更
           command: chown -R $USER:$USER ~/project/src
