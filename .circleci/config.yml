@@ -50,6 +50,8 @@ jobs:
           name: .envファイルを復元
           command: echo $ENV_FILE | base64 --decode > .env
 
+      - run: sudo docker-php-ext-install pdo_mysql
+
       - run:
           name: マイグレーションを実行
           command: php artisan migrate --env=testing --force
