@@ -14,8 +14,6 @@ jobs:
       - checkout:
           path: ~/project
 
-      - run: sudo docker-php-ext-install pdo_mysql
-
       - run:
           name: フォルダの所有権を変更
           command: chown -R $USER:$USER ~/project/src
@@ -51,6 +49,10 @@ jobs:
       - run:
           name: .envファイルを復元
           command: echo $ENV_FILE | base64 --decode > .env
+
+      - run:
+          name: PDOエクステンションのインストール
+          command: sudo docker-php-ext-install pdo_mysql
 
       - run:
           name: マイグレーションを実行
