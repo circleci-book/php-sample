@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build:
+  build_and_test:
     working_directory: ~/project/src
     docker:
       - image: circleci/php:7.3.10-stretch-node-browsers
@@ -74,4 +74,4 @@ jobs:
 workflows:
   main:
     jobs:
-     - build
+     - build_and_test
