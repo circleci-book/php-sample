@@ -14,9 +14,9 @@ jobs:
       - checkout:
           path: ~/project
 
-      - run:
-          name: フォルダの所有権を変更
-          command: chown -R $USER:$USER ~/project/src
+      #- run:
+      #    name: フォルダの所有権を変更
+      #    command: chown -R $USER:$USER ~/project/src
 
       - restore_cache:
           keys:
