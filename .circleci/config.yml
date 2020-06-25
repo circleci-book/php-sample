@@ -72,4 +72,4 @@ jobs:
 workflows:
   main:
     jobs:
-     - build_and_test
+      - build_and_test
